@@ -21,13 +21,6 @@ export default function Exercise() {
           console.log(data);
         });
       });
-      
-      useEffect(() => {
-        clientSocket.on('new_user', (data) => {
-          setNumUsers(data.num_users);
-          console.log("Received something")
-        });
-      });
 
     
       return (
