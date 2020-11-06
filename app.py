@@ -8,31 +8,34 @@ from os.path import join, dirname
 import requests
 from flask import request
 
+NUM_USERS = 0
+
+
+EMIT_ALL_GOALS_CHANNEL = "goal_history"
+
+
+DOTENV_PATH = join(dirname(__file__), "sql.env")
+load_dotenv(DOTENV_PATH)
+
+
+DATABASE_URI = os.environ["DATABASE_URL"]
 
 app = Flask(__name__)
 server_socket = flask_socketio.SocketIO(app)
 server_socket.init_app(app, cors_allowed_origins="*")
 
-EMIT_ALL_GOALS_CHANNEL = "goal_history"
 
-DOTENV_PATH = join(dirname(__file__), "sql.env")
-load_dotenv(DOTENV_PATH)
-
-DATABASE_URI = os.environ["DATABASE_URL"]
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
-
 db = flask_sqlalchemy.SQLAlchemy(app)
 db.app = app
-
 db.create_all()
 db.session.commit()
 
 import models
 
-NUM_USERS = 0
 
-def emit_all_goals(channel):
+def emit_all_goals(channel, sid):
     """Emits all contents of the database to newest client"""
     all_names = [
         DB_name.name
@@ -67,24 +70,30 @@ def emit_all_goals(channel):
             "all_statuses": all_statuses,
             "all_messages": all_messages,
 
-        }, broadcast=True
+        }, sid
     )
-    print("ALL NAMES: ", all_names)
+    print("\nALL NAMES: ", all_names)
     print("ALL IMAGES: ", all_images)
     print("ALL GOALS: ", all_goals)
     print("ALL STATUSES: ", all_statuses)
-    print("ALL MESSAGES: ", all_messages)
-    
+    print("ALL MESSAGES: ", all_messages, "\n")
+
+
 
 @server_socket.on("connect")
 def on_connect():
-   emit_all_goals(EMIT_ALL_GOALS_CHANNEL)
+    global NUM_USERS
+    NUM_USERS += 1
+    
+    print("Someone connected!", NUM_USERS)
+    server_socket.emit("new_user", NUM_USERS, broadcast=True)
+    emit_all_goals(EMIT_ALL_GOALS_CHANNEL, request.sid)
 
 
 @app.route("/", methods=["GET", "POST"])
 def hello():
     """ Runs the app!!!"""
-    return flask.render_template("index.html")
+    return render_template("index.html")
 
 
 if __name__ == "__main__":
