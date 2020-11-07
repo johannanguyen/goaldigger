@@ -8,3 +8,4 @@
   e) `npm install -g webpack`  
   f) `npm install --save-dev webpack`  
   g) `npm install socket.io-client --save`  
+  h) `npm install react-google-login`

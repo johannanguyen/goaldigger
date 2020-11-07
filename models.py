@@ -8,16 +8,15 @@ from enum import Enum
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(35), nullable=False)
-    email = db.Column(db.String(100))
     google_id = db.Column(db.String())
     fb_id = db.Column(db.String())
     img_url = db.Column(db.String())
-    bio = db.Column(db.String())
+    #bio = db.Column(db.String())
     
-    def __init__(self, name, email, bio, img_url=None, google_id=None, fb_id=None):
+    def __init__(self, name, email, img_url=None, google_id=None, fb_id=None):
         self.name = name
         self.email = email
-        self.bio = bio
+        #self.bio = bio
         if google_id:
             self.google_id = google_id
         if fb_id:

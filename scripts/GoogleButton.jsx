@@ -8,19 +8,17 @@ const responseGoogle = (response) => {
 }
 
 function get_info(google_user) {
-    var id_token = google_user.getAuthResponse().id_token;
-    let username = google_user.profileObj.name;
+    let name = google_user.profileObj.name;
+    let google_id = google_user.profileObj.email;
     let image = google_user.profileObj.imageUrl;
     let is_signed_in = google_user.isSignedIn()
     
-    /*
     clientSocket.emit('google_user', {
-        'id_token': id_token,
-        'username': username,
+        'name': name,
+        'google_id': google_id,
         'image': image,
         'is_signed_in': is_signed_in
     });
-    */
 }
 
 export function GoogleButton() {
@@ -28,7 +26,7 @@ export function GoogleButton() {
         <div>
             <GoogleLogin
             clientId="926047747876-uprudtkm1e9d6e23nrf252dq07qb62tn.apps.googleusercontent.com"
-            buttonText="Login to Talk to the Coolest People EVER"
+            buttonText="Login"
             onSuccess={get_info}
             onFailure={responseGoogle}
             cookiePolicy={'single_host_origin'}
