@@ -11,8 +11,22 @@ import InputLabel from '@material-ui/core/InputLabel';
 
 
 export default function AddGoal() {
+    const [users, setUsers] = React.useState([]);
     const [category, setCategory] = useState('');
     const [goal, setGoal] = useState('');
+    const [progress, setProgress] = useState('');
+    const [postText, setPostText] = useState('');
+    
+    function getGoogleUserInfo() {
+    React.useEffect(() => {
+      clientSocket.on('google info received', (data) => {
+        console.log("Received this in the add goal section: ", data);
+        setUsers(data);
+      });
+    });
+  }
+   
+     getGoogleUserInfo(); 
     
     const useStyles = makeStyles((theme) => ({
         formControl: {
@@ -32,22 +46,32 @@ export default function AddGoal() {
     const changeHandler_goal = (event) => {
         setGoal(event.target.value);
     };
+    
+    const changeHandler_postText = (event) => {
+        setPostText(event.target.value);
+        setProgress('Added');
+    };
+    
 
 
     const clickHandler = () => {
-        //Emit something here
-    };
-    
+    clientSocket.emit('add_goal', { category, goal, progress, postText, users });
+    setGoal('');
+    setPostText('');
+    console.log("sent added goal to server: ", category, goal, progress, postText, users);
+  };
+
+
+
     return(
         <div className="root_container">
             <div className="content_container">
+
+                <h2>Add Goal</h2>
+                <img src={users["image"]}></img>
                 <br />
+                <b>{users["username"]}</b>
                 <br />
-                <br />
-                <br />
-                <br />
-                <h2>Add Goal Page</h2>
-                <h3>User Name and Image here</h3>
     
                 <FormControl className={useStyles().formControl}>
                 <InputLabel htmlFor="age-native-simple">Select a Category</InputLabel>
@@ -77,9 +101,18 @@ export default function AddGoal() {
                           onChange={changeHandler_goal}
                         />
                     <br />
+                    
+                    <TextField
+                          id="outlined-basic"
+                          label="Add a message"
+                          value={postText}
+                          onChange={changeHandler_postText}
+                        />
+                    <br />
+                    
                     <Button variant="contained"
                         color="primary"
-                        onClick="clickHandler"
+                        onClick={clickHandler}
                         style={{backgroundColor: "0e99b6"}}>
                         Add!
                     </Button>

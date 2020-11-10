@@ -7,6 +7,7 @@ import flask_sqlalchemy
 from dotenv import load_dotenv
 import requests
 from flask import request
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -27,7 +28,6 @@ db.session.commit()
 
 import models
 
-NUM_USERS = 0
 
 EMIT_EXERCISE_NEWSFEED_CHANNEL = "homepage"
 GOOGLE_INFO_RECEIVED_CHANNEL = "google info received"
@@ -74,17 +74,11 @@ def emit_newsfeed(channel, sid):
         for DB_progress in db.session.query(models.Goals).all()
     ]
     
-    # all_dates = [
-    #     DB_date.date
-    #     for DB_date in db.session.query(models.Goals).all()
-    # ]
-    
     all_post_texts = [
         DB_post_text.post_text
         for DB_post_text in db.session.query(models.Goals).all()
     ]
 
-    
     for db_users, db_goals in db.session.query(models.Users, models.Goals).filter(models.Users.id == models.Goals.user_id).order_by(models.Goals.date).all():
         all_ids.append(db_users.id)
         all_names.append(db_users.name)
@@ -109,14 +103,16 @@ def emit_newsfeed(channel, sid):
         },
         sid,
     )
-
     print(all_ids, all_names, all_images)
+    
+
 
 def push_new_user_to_db(email, username, image, is_signed_in, id_token):
     db.session.add(models.Users(email, username, image, is_signed_in, id_token));
     db.session.commit();
 
 
+    
 @server_socket.on('new google user')
 def on_new_google_user(data):
     # Grabs all of the users CURRENTLY in the database
@@ -148,7 +144,8 @@ def on_new_google_user(data):
     
     personal_profile = {
         "username": data["username"],
-        "image": data["image"]
+        "image": data["image"],
+        "primary_id": primary_id
     }
     
     personal_goals = [
@@ -164,10 +161,23 @@ def on_new_google_user(data):
     server_socket.emit("google info received", personal_profile, request.sid)
     server_socket.emit("goal_description", personal_goals, request.sid)
     server_socket.emit("goal_progress", personal_progress, request.sid)
+   
+    
+    
+@server_socket.on('add_goal')
+def add_goal(data):
+    category = data["category"]
+    user_id = data["users"]["primary_id"]
+    description = data["goal"]
+    progress = data["progress"]
+    post_text = data["postText"]
+    
+    db.session.add(models.Goals(user_id, category, description, progress, post_text))
+    db.session.commit()
     
 
+
 def emit_google_info(channel):
-        
     all_users = [{
         "username": user.name,
         "img_url": user.img_url,
@@ -177,6 +187,8 @@ def emit_google_info(channel):
     server_socket.emit(channel, {
         'allusers' : all_users
     })
+    
+    
 
 @server_socket.on("connect")
 def on_connect():
@@ -184,10 +196,12 @@ def on_connect():
     #emit_google_info(GOOGLE_INFO_RECEIVED_CHANNEL)
 
 
+
 @app.route("/", methods=["GET", "POST"])
 def hello():
     """ Runs the app!!!"""
     return flask.render_template("index.html")
+
 
 
 if __name__ == "__main__":
