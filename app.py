@@ -9,15 +9,15 @@ import requests
 from flask import request
 from datetime import datetime
 
-
-app = Flask(__name__)
-server_socket = flask_socketio.SocketIO(app)
-server_socket.init_app(app, cors_allowed_origins="*")
+app = flask.Flask(__name__)
 
 dotenv_path = join(dirname(__file__), "sql.env")
 load_dotenv(dotenv_path)
 database_uri = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
+
+server_socket = flask_socketio.SocketIO(app)
+server_socket.init_app(app, cors_allowed_origins="*")
 
 db = flask_sqlalchemy.SQLAlchemy(app)
 db.init_app(app)
@@ -31,6 +31,19 @@ import models
 
 EMIT_EXERCISE_NEWSFEED_CHANNEL = "homepage"
 GOOGLE_INFO_RECEIVED_CHANNEL = "google info received"
+ALL_IDS_KEY = "all_ids"
+ALL_NAMES_KEY = "all_names"
+ALL_IMAGES_KEY = "all_images"
+ALL_CATEGORIES_KEY = "all_categories"
+ALL_USER_PRIMARY_IDS_KEY = "all_user_primary_ids"
+ALL_DESCRIPTIONS_KEY = "all_descriptions"
+ALL_PROGRESS_KEY = "all_progress"
+ALL_POST_TEXTS_KEY = "all_post_texts"
+USERNAME_KEY = "username"
+IMAGE_KEY = "image"
+PRIMARY_ID_KEY = "primary_id"
+DESCRIPTION_KEY = "description"
+PROGRESS_KEY = "progress"
 
 def emit_newsfeed(channel, sid):
     all_ids = [
@@ -90,69 +103,66 @@ def emit_newsfeed(channel, sid):
     server_socket.emit(
         channel,
         {
-            "all_ids": all_ids,
-            "all_names": all_names,
-            "all_images": all_images,
+            ALL_IDS_KEY: all_ids,
+            ALL_NAMES_KEY: all_names,
+            ALL_IMAGES_KEY: all_images,
             #"all_goal_ids": all_goal_ids,
-            "all_categories": all_categories,
-            "all_user_primary_ids": all_user_primary_ids,
-            "all_descriptions": all_descriptions,
-            "all_progress": all_progress,
+            ALL_CATEGORIES_KEY: all_categories,
+            ALL_USER_PRIMARY_IDS_KEY: all_user_primary_ids,
+            ALL_DESCRIPTIONS_KEY: all_descriptions,
+            ALL_PROGRESS_KEY: all_progress,
             #"all_dates": all_dates,
-            "all_post_texts": all_post_texts
+            ALL_POST_TEXTS_KEY: all_post_texts
         },
         sid,
     )
-    print(all_ids, all_names, all_images)
-    
 
+# def push_new_user_to_db(email, username, image, is_signed_in, id_token):
+#     db.session.add(models.Users(email, username, image, is_signed_in, id_token));
+#     db.session.commit();
 
-def push_new_user_to_db(email, username, image, is_signed_in, id_token):
-    db.session.add(models.Users(email, username, image, is_signed_in, id_token));
-    db.session.commit();
-
-
+def get_request_sid():
+    return flask.request.sid
     
 @server_socket.on('new google user')
 def on_new_google_user(data):
-    # Grabs all of the users CURRENTLY in the database
-    # Grabs the new google login email and checks to see if it is in the list of emails
-    #     If it is not, it will add that user to the database
-    # The email array will have to be repopulated (to account for newly added user)
-    # primary_id is determined by taking the index of where the email is located in the email array + 1
-    #     example:
-    #         all_emails = [johanna@gmail.com, joey@gmail.com]
-    #         johanna's primary id = 0 + 1 = 1
-    # Grabs all the goals and progress in the database relating to the primary id
-    # Emits username and image to client
-    # Emits the goals and progress
+    ''' Grabs all of the users CURRENTLY in the database
+        Grabs the new google login email and checks to see if it is in the list of emails
+        If it is not, it will add that user to the database
+        The email array will have to be repopulated (to account for newly added user)
+        primary_id is determined by taking the index of where the email is located in the email array + 1
+        example:
+            all_emails = [johanna@gmail.com, joey@gmail.com]
+            johanna's primary id = 0 + 1 = 1
+        Grabs all the goals and progress in the database relating to the primary id
+        Emits username and image to client
+        Emits the goals and progress '''
     
     user = db.session.query(models.Users).filter_by(email=data["email"]).first()
 
     if (not user):
-        push_new_user_to_db(data['email'], data['username'], data['image'], "Null", data['id_token'])
-
+        #push_new_user_to_db(data['email'], data['username'], data['image'], "Null", data['id_token'])
+        db.session.add(data['email'], data['username'], data['image'], "Null", data['id_token']);
+        db.session.commit();
+    
     user = db.session.query(models.Users).filter_by(email=data["email"]).first()
-    
+
     personal_profile = {
-        "username": data["username"],
-        "image": data["image"],
-        "primary_id": user.id
+        USERNAME_KEY: data["username"],
+        IMAGE_KEY: data["image"],
+        PRIMARY_ID_KEY: user.id
     }
-    
+
     personal_goals = [
         {
-            "description": personal_goal.description,
-            "progress": personal_goal.progress
+            DESCRIPTION_KEY: personal_goal.description,
+            PROGRESS_KEY: personal_goal.progress
         }
         for personal_goal in models.Goals.query.filter(models.Goals.user_id == user.id).all()
     ]
 
-    
-    server_socket.emit("google info received", personal_profile, request.sid)
-    server_socket.emit("user goals", personal_goals, request.sid)
-   
-    
+    # server_socket.emit("google info received", personal_profile, request.sid)
+    # server_socket.emit("user goals", personal_goals, request.sid)
     
 @server_socket.on('add_goal')
 def add_goal(data):
@@ -162,32 +172,15 @@ def add_goal(data):
     progress = data["progress"]
     post_text = data["postText"]
     
-    server_socket.emit("add_goal", data, request.sid)
-    
     db.session.add(models.Goals(user_id, category, description, progress, post_text))
     db.session.commit()
     
-
-
-def emit_google_info(channel):
-    all_users = [{
-        "username": user.name,
-        "img_url": user.img_url,
-        "user_id": user.id
-        } for user in db.session.query(models.Users).all()]
-
-    server_socket.emit(channel, {
-        'allusers' : all_users
-    })
-    
-    
-
+    #server_socket.emit("add_goal", data, request.sid)
+    server_socket.emit("add_goal", data)
 @server_socket.on("connect")
 def on_connect():
     emit_newsfeed(EMIT_EXERCISE_NEWSFEED_CHANNEL, request.sid)
     #emit_google_info(GOOGLE_INFO_RECEIVED_CHANNEL)
-
-
 
 @app.route("/")
 def index():
