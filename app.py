@@ -45,7 +45,7 @@ PRIMARY_ID_KEY = "primary_id"
 DESCRIPTION_KEY = "description"
 PROGRESS_KEY = "progress"
 
-def emit_newsfeed(channel, sid):
+def emit_newsfeed(channel):
     all_ids = [
         DB_id.id
         for DB_id in db.session.query(models.Users).all()
@@ -113,13 +113,8 @@ def emit_newsfeed(channel, sid):
             ALL_PROGRESS_KEY: all_progress,
             #"all_dates": all_dates,
             ALL_POST_TEXTS_KEY: all_post_texts
-        },
-        sid,
+        }
     )
-
-# def push_new_user_to_db(email, username, image, is_signed_in, id_token):
-#     db.session.add(models.Users(email, username, image, is_signed_in, id_token));
-#     db.session.commit();
 
 def get_request_sid():
     return flask.request.sid
@@ -137,13 +132,18 @@ def on_new_google_user(data):
         Grabs all the goals and progress in the database relating to the primary id
         Emits username and image to client
         Emits the goals and progress '''
+    email = data['email']
+    username = data['username']
+    image = data['image']
+    id_token = data['id_token']
     
     user = db.session.query(models.Users).filter_by(email=data["email"]).first()
 
     if (not user):
-        #push_new_user_to_db(data['email'], data['username'], data['image'], "Null", data['id_token'])
         db.session.add(data['email'], data['username'], data['image'], "Null", data['id_token']);
         db.session.commit();
+    db.session.add(email, username, image, "Null", id_token);
+    db.session.commit();
     
     user = db.session.query(models.Users).filter_by(email=data["email"]).first()
 
@@ -153,16 +153,16 @@ def on_new_google_user(data):
         PRIMARY_ID_KEY: user.id
     }
 
-    personal_goals = [
-        {
-            DESCRIPTION_KEY: personal_goal.description,
-            PROGRESS_KEY: personal_goal.progress
-        }
-        for personal_goal in models.Goals.query.filter(models.Goals.user_id == user.id).all()
-    ]
+    # personal_goals = [
+    #     {
+    #         DESCRIPTION_KEY: personal_goal.description,
+    #         PROGRESS_KEY: personal_goal.progress
+    #     }
+    #     for personal_goal in models.Goals.query.filter(models.Goals.user_id == user.id).all()
+    # ]
 
-    # server_socket.emit("google info received", personal_profile, request.sid)
-    # server_socket.emit("user goals", personal_goals, request.sid)
+    server_socket.emit("google info received", personal_profile)
+    #server_socket.emit("user goals", personal_goals)
     
 @server_socket.on('add_goal')
 def add_goal(data):
@@ -175,12 +175,12 @@ def add_goal(data):
     db.session.add(models.Goals(user_id, category, description, progress, post_text))
     db.session.commit()
     
-    #server_socket.emit("add_goal", data, request.sid)
     server_socket.emit("add_goal", data)
+    
 @server_socket.on("connect")
 def on_connect():
-    emit_newsfeed(EMIT_EXERCISE_NEWSFEED_CHANNEL, request.sid)
-    #emit_google_info(GOOGLE_INFO_RECEIVED_CHANNEL)
+    print("Connected")
+    emit_newsfeed(EMIT_EXERCISE_NEWSFEED_CHANNEL)
 
 @app.route("/")
 def index():
