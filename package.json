@@ -41,5 +41,22 @@
     "react-google-login": "^5.1.22",
     "react-router-dom": "^5.2.0",
     "socket.io-client": "^2.3.1"
-  }
+  },
+  "name": "goaldigger",
+  "description": "1. Clone this repo and install the required dependencies using the following commands:<br>   a) `git clone https://github.com/johannanguyen/goaldigger.git`<br>   b) `npm install`     c) `pip install flask-socketio`     d) `pip install eventlet`     e) `npm install -g webpack`     f) `npm install --save-dev webpack`     g) `npm install socket.io-client --save`     h) `npm install @material-ui/core`   i) `npm install react-google-login`",
+  "version": "1.0.0",
+  "main": "webpack.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johannanguyen/goaldigger.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johannanguyen/goaldigger/issues"
+  },
+  "homepage": "https://github.com/johannanguyen/goaldigger#readme"
 }
