@@ -20,7 +20,7 @@ from enum import Enum
 
 #when using the python shell to create the tables, call createDummyData() to input rows into the tables after creating the tables.
 #from command line: `python`, `import models`, `from app import db`, `db.create_all()`, `db.session.commit()`, `createDummyData()`, `exit()`
-
+'''
 def createDummyData():
     db.session.add(Users("johanna@google.com", "Johanna", "imgurl", "false", "I like coding"))
     db.session.add(Users("cristian@google.com", "Cristian", "imgurl", "false", "I like gaming"))
@@ -31,6 +31,7 @@ def createDummyData():
     db.session.add(Goals(1, "Exercise", "I want to deadlift 250 pounds", "Completed", "Really happy to have achieved my goal!"))
     db.session.add(Goals(2, "Work", "I want to solve 2 hard leetcodes a day", "Started", "I can do this!"))
     db.session.commit()
+'''
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)

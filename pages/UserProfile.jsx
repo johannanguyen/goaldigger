@@ -95,6 +95,24 @@ export default function UserProfile() {
               {' '}
               {data.description}
               <br />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={deleteHandler}
+                  style={{ backgroundColor: '0e99b6' }}
+                >
+                  Delete!
+                </Button>
+              <br />
+              <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={completeHandler}
+                  style={{ backgroundColor: '0e99b6' }}
+                >
+                  Compelete!
+                </Button>
+              <br />
             </div>
           ))}
         </div>

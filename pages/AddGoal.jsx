@@ -65,6 +65,24 @@ export default function AddGoal() {
     setPostText('');
     console.log('sent added goal to server: ', category, goal, progress, postText, users);
   };
+  
+  const deleteHandler = () => {
+    clientSocket.emit('delete_goal', {
+      category, goal, progress, postText, users,
+    });
+    setGoal('');
+    setPostText('');
+    console.log('sent deleted goal to server: ', category, goal, progress, postText, users);
+  };
+  
+  const completeHandler = () => {
+    clientSocket.emit('complete_goal', {
+      category, goal, progress, postText, users,
+    });
+    setGoal('');
+    setPostText('');
+    console.log('sent completed goal to server: ', category, goal, progress, postText, users);
+  };
 
   return (
     <div className="root_container">
@@ -135,6 +153,8 @@ export default function AddGoal() {
           >
             Add!
           </Button>
+          
+          <br/>
         </FormControl>
       </div>
     </div>
