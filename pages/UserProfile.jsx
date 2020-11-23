@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Fab from '@material-ui/core/Fab';
-import { clientSocket } from '../scripts/Socket';
+//import { clientSocket } from '../scripts/Socket';
+import { clientSocket } from './Socket';
 import { GoogleOut } from '../scripts/GoogleLogout';
 
 export default function UserProfile() {

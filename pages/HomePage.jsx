@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { CategoryButton } from './CategoryButton'
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-import { clientSocket } from '../scripts/Socket';
+//import { clientSocket } from '../scripts/Socket';
+import { clientSocket } from './Socket';
 import { GoogleOut } from '../scripts/GoogleLogout';
 import ScrollToBottom from 'react-scroll-to-bottom';
 
