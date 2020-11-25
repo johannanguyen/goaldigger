@@ -1,5 +1,5 @@
 import * as React from 'react';
-//import { GoogleButton } from '../scripts/GoogleLogin';
+import { GoogleButton } from '../scripts/GoogleLogin';
 import './styles.css';
 
 import { GoogleLogin } from 'react-google-login';
@@ -17,7 +17,7 @@ function get_info(google_user) {
     username: google_user.profileObj.name,
     image: google_user.profileObj.imageUrl,
   });
-  ChangeVis();
+  //ChangeVis();
 }
 
 function ChangeVis() {
@@ -31,7 +31,8 @@ export default function LandingPage() {
     <div id="visibility">
       <div className="root_container">
         <div className="button_container">
-          <GoogleLogin
+          <GoogleButton />
+          {/*<GoogleLogin
             // clientId="1062054290390-k78ra3cikp1topp72a1s8bo02m965adi.apps.googleusercontent.com"
             clientId="1054986958378-occ0i46u818t41nptv82m2ompremrnkh.apps.googleusercontent.com"
             buttonText="Login"
@@ -40,6 +41,7 @@ export default function LandingPage() {
             onFailure={responseGoogle}
             cookiePolicy="single_host_origin"
           />
+          */}
         </div>
   
         <div className="content_container">

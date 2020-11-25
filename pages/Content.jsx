@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 
@@ -11,7 +11,7 @@ import Exercise from '../scripts/Exercise';
 import Art from '../scripts/Art';
 
 export default function Content() {
-  
+  /*
   function User() {
     const prof = document.getElementById('prof');
     const home = document.getElementById('home');
@@ -40,6 +40,7 @@ export default function Content() {
   
   //will put landingpage code directly into content.jsx then check if it is visible or not, 
   //depending on that will depend on wheter or not to display the homepage
+  
   return (
     <div>
       <LandingPage />
@@ -103,21 +104,22 @@ export default function Content() {
       </div>
     </div>
   );
+  */
   
-  /*
+  //{/*<Route path="/AddGoal" component={AddGoal} />*/}
   return (
     <BrowserRouter>
       <div>
         <Switch>
-          <Route path="/Art" component={Art} />
+          <Route path="/Art"> <Art /> </Route> 
 
-          <Route path="/AddGoal" component={AddGoal} />
-          <Route path="/UserProfile" component={UserProfile} />
-          <Route path="/HomePage" component={HomePage} />
-          <Route path="/" component={LandingPage} />
+          <Route path="/AddGoal"> <AddGoal /> </Route>
+          <Route path="/UserProfile"> <UserProfile/> </Route>
+          <Route path="/HomePage"> <HomePage/> </Route>
+          <Route path="/"> <LandingPage /> </Route>
         </Switch>
       </div>
     </BrowserRouter>
   );
-  */
+  
 }

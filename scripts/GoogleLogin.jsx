@@ -14,7 +14,7 @@ function get_info(google_user) {
     image: google_user.profileObj.imageUrl,
   });
 
-  //ChangePage();
+  ChangePage();
 }
 
 function ChangePage() {
