@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 
 import LandingPage from './LandingPage';
@@ -108,7 +108,7 @@ export default function Content() {
   
   //{/*<Route path="/AddGoal" component={AddGoal} />*/}
   return (
-    <BrowserRouter>
+    <Router>
       <div>
         <Switch>
           <Route path="/Art"> <Art /> </Route> 
@@ -119,7 +119,7 @@ export default function Content() {
           <Route path="/"> <LandingPage /> </Route>
         </Switch>
       </div>
-    </BrowserRouter>
+    </Router>
   );
   
 }

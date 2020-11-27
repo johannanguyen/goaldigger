@@ -11,6 +11,7 @@ const responseGoogle = (response) => {
 };
 
 function get_info(google_user) {
+  ChangePage();
   clientSocket.emit('new google user', {
     id_token: google_user.profileObj.googleId,
     email: google_user.profileObj.email,
@@ -18,6 +19,12 @@ function get_info(google_user) {
     image: google_user.profileObj.imageUrl,
   });
   //ChangeVis();
+  event.preventDefault();
+}
+
+function ChangePage() {
+  location.href = '/HomePage';
+  // <button  onclick="ChangePage()">index.html</button>
 }
 
 function ChangeVis() {
@@ -31,8 +38,8 @@ export default function LandingPage() {
     <div id="visibility">
       <div className="root_container">
         <div className="button_container">
-          <GoogleButton />
-          {/*<GoogleLogin
+          {/*<GoogleButton />*/}
+          <GoogleLogin
             // clientId="1062054290390-k78ra3cikp1topp72a1s8bo02m965adi.apps.googleusercontent.com"
             clientId="1054986958378-occ0i46u818t41nptv82m2ompremrnkh.apps.googleusercontent.com"
             buttonText="Login"
@@ -41,7 +48,6 @@ export default function LandingPage() {
             onFailure={responseGoogle}
             cookiePolicy="single_host_origin"
           />
-          */}
         </div>
   
         <div className="content_container">
