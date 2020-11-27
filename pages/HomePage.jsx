@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { CategoryButton } from './CategoryButton'
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-//import { clientSocket } from '../scripts/Socket';
+import ScrollToBottom from 'react-scroll-to-bottom';
+import { CategoryButton } from './CategoryButton';
+// import { clientSocket } from '../scripts/Socket';
 import { clientSocket } from './Socket';
 import { GoogleOut } from '../scripts/GoogleLogout';
-import ScrollToBottom from 'react-scroll-to-bottom';
 
 export default function HomePage() {
   const [goals, setGoals] = useState([]);
@@ -17,24 +17,24 @@ export default function HomePage() {
       minWidth: 150,
     },
   }));
-  
-  function getGoals(){
+
+  function getGoals() {
     React.useEffect(() => {
-      clientSocket.on('homepage', updateGoals)
+      clientSocket.on('homepage', updateGoals);
       return () => {
-        clientSocket.off('homepage', updateGoals)
-      }
-    })
+        clientSocket.off('homepage', updateGoals);
+      };
+    });
   }
-  
+
   function updateGoals(data) {
-    setGoals(data)
+    setGoals(data);
   }
-  
+
   function getGoogleUserInfo() {
     React.useEffect(() => {
       clientSocket.on('google info received', (data) => {
-        console.log('Received this in the add goal section: ', data);
+        // console.log('Received this in the add goal section: ', data);
         setUser(data);
       });
     });
@@ -96,7 +96,7 @@ export default function HomePage() {
 
   return (
     <div className="root_container">
-      <GoogleOut/>
+      <GoogleOut />
       <div className="category_menu">
         <br />
         <CategoryButton category="Work" />
@@ -119,10 +119,13 @@ export default function HomePage() {
           color="primary"
           onClick={ChangePage}
           style={{
-            backgroundColor: '0e99b6', minHeight: '60px', minWidth: '170px', border: '1px solid white',
+            backgroundColor: '0e99b6',
+            minHeight: '60px',
+            minWidth: '170px',
+            border: '1px solid white',
           }}
         >
-        
+
           User Profile
         </Button>
         */}
@@ -132,26 +135,26 @@ export default function HomePage() {
 
       <div className="homepage_container">
         <ScrollToBottom>
-        { goals.map((data, index) => (
-          <div>
-            <Avatar src={data.img_url} />
+          { goals.map((data, index) => (
+            <div>
+              <Avatar src={data.img_url} />
 
-            {data.name}
-            {' '}
-            {data.progress}
-            {' '}
-            a goal in
-            {' '}
-            <b>{data.category}</b>
-            :
-            {' '}
-            {data.description}
-            <br />
-            "
-            {data.post_text}
-            "
-          </div>
-        )) }
+              {data.name}
+              {' '}
+              {data.progress}
+              {' '}
+              a goal in
+              {' '}
+              <b>{data.category}</b>
+              :
+              {' '}
+              {data.description}
+              <br />
+              &quot;
+              {data.post_text}
+              &quot;
+            </div>
+          )) }
         </ScrollToBottom>
       </div>
     </div>

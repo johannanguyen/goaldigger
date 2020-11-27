@@ -2,6 +2,7 @@
 import unittest.mock as mock
 import unittest
 import sys
+
 sys.path.insert(1, "../")
 from alchemy_mock.mocking import UnifiedAlchemyMagicMock
 import app
