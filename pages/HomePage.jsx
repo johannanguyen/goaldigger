@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { CategoryButton } from './CategoryButton'
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-//import { clientSocket } from '../scripts/Socket';
-import { clientSocket } from './Socket';
+import { clientSocket } from '../scripts/Socket';
 import { GoogleOut } from '../scripts/GoogleLogout';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import { NavLink } from 'react-router-dom';
 
 export default function HomePage() {
   const [goals, setGoals] = useState([]);
@@ -96,6 +96,13 @@ export default function HomePage() {
 
   return (
     <div className="root_container">
+      
+      <div id="navi">
+          <NavLink to="/"> LandingPage </NavLink>
+          <NavLink to="/UserProfile"> UserProfile </NavLink>
+          <NavLink to="/AddGoal"> AddGoal </NavLink>
+      </div>
+        
       <GoogleOut/>
       <div className="category_menu">
         <br />

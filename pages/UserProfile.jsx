@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Fab from '@material-ui/core/Fab';
-//import { clientSocket } from '../scripts/Socket';
-import { clientSocket } from './Socket';
+import { clientSocket } from '../scripts/Socket';
 import { GoogleOut } from '../scripts/GoogleLogout';
+import { NavLink } from 'react-router-dom';
 
 export default function UserProfile() {
   const [user, setUser] = React.useState([]);
@@ -50,6 +50,13 @@ export default function UserProfile() {
 
   return (
     <div className="root_container">
+      
+      <div id="navi">
+          <NavLink to="/"> LandingPage </NavLink>
+          <NavLink to="/HomePage"> HomePage </NavLink>
+          <NavLink to="/AddGoal"> AddGoal </NavLink>
+      </div>
+        
       <GoogleOut/>
       {/*
       <Button

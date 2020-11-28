@@ -1,43 +1,76 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { GoogleButton } from '../scripts/GoogleLogin';
 import './styles.css';
 
+
+import { CategoryButton } from './CategoryButton'
+import ScrollToBottom from 'react-scroll-to-bottom';
+import Avatar from '@material-ui/core/Avatar';
+import { makeStyles } from '@material-ui/core/styles';
+import { GoogleOut } from '../scripts/GoogleLogout';
+
 import { GoogleLogin } from 'react-google-login';
 import { clientSocket } from '../scripts/Socket';
-
-
-const responseGoogle = (response) => {
-  console.log('Could not log in: ', response);
-};
-
-function get_info(google_user) {
-  location.href = '/HomePage';//ChangePage();
-  clientSocket.emit('new google user', {
-    id_token: google_user.profileObj.googleId,
-    email: google_user.profileObj.email,
-    username: google_user.profileObj.name,
-    image: google_user.profileObj.imageUrl,
-  });
-  //ChangeVis();
-  event.preventDefault();
-}
-/*
-function ChangePage() {
-  location.href = '/HomePage';
-  // <button  onclick="ChangePage()">index.html</button>
-}
-*/
-
-function ChangeVis() {
-    const root = document.getElementById('visibility');
-    root.style.display = 'none'; 
-}
-
+import { NavLink } from 'react-router-dom';
 
 export default function LandingPage() {
+
+  const [goals, setGoals] = useState([]);
+  const [user, setUser] = useState({});
+  
+  const responseGoogle = (response) => {
+    console.log('Could not log in: ', response);
+  };
+  
+  function get_info(google_user) {
+    //location.href = '/HomePage';//ChangePage();
+    clientSocket.emit('new google user', {
+      id_token: google_user.profileObj.googleId,
+      email: google_user.profileObj.email,
+      username: google_user.profileObj.name,
+      image: google_user.profileObj.imageUrl,
+    });
+    //ChangeVis();
+    const root = document.getElementById('navi');
+    root.style.display = 'block'; 
+    event.preventDefault();
+  }
+  
+  function getGoogleUserInfo() {
+      React.useEffect(() => {
+        clientSocket.on('google info received', (data) => {
+          console.log('Received this in the add goal section: ', data);
+          setUser(data);
+        });
+      });
+    }
+  
+  /*
+  function ChangePage() {
+    location.href = '/HomePage';
+    // <button  onclick="ChangePage()">index.html</button>
+  }
+  */
+  
+  //use changevis for when logged in to dispaly the navlink
+  
+  function ChangeVis() {
+      const root = document.getElementById('navi');
+      root.style.display = 'block'; 
+  }
+
+
+
   return (
-    <div id="visibility">
+   <div id="visibility">
       <div className="root_container">
+        
+        <div id="navi" style={{ display: 'none' }}>
+          <NavLink to="/HomePage"> HomePage </NavLink>
+          <NavLink to="/UserProfile"> UserProfile </NavLink>
+          <NavLink to="/AddGoal"> AddGoal </NavLink>
+        </div>
+        
         <div className="button_container">
           {/*<GoogleButton />*/}
           <GoogleLogin
@@ -59,6 +92,35 @@ export default function LandingPage() {
           <p>Achieve more, together.</p>
           <img src="https://i.ibb.co/PDn92m7/featured-stories.png" />
         </div>
+      </div>
+      
+      <br />
+      <br />
+      
+      <Avatar src={user.image} />
+      <div className="homepage_container">
+        <ScrollToBottom>
+        { goals.map((data, index) => (
+          <div>
+            <Avatar src={data.img_url} />
+
+            {data.name}
+            {' '}
+            {data.progress}
+            {' '}
+            a goal in
+            {' '}
+            <b>{data.category}</b>
+            :
+            {' '}
+            {data.description}
+            <br />
+            "
+            {data.post_text}
+            "
+          </div>
+        )) }
+        </ScrollToBottom>
       </div>
     </div>
   );

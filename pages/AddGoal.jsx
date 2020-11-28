@@ -7,9 +7,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-//import { clientSocket } from '../scripts/Socket';
-import { clientSocket } from './Socket';
+import { clientSocket } from '../scripts/Socket';
 import { GoogleOut } from '../scripts/GoogleLogout';
+import { NavLink } from 'react-router-dom';
 
 export default function AddGoal() {
   const [users, setUsers] = React.useState([]);
@@ -87,6 +87,13 @@ export default function AddGoal() {
 
   return (
     <div className="root_container">
+        
+      <div id="navi">
+          <NavLink to="/"> LandingPage </NavLink>
+          <NavLink to="/HomePage"> HomePage </NavLink>
+          <NavLink to="/UserProfile"> UserProfile </NavLink>
+      </div>
+        
       <GoogleOut />
       {/*
       <Button
