@@ -11,7 +11,7 @@ const responseGoogle = (response) => {
 };
 
 function get_info(google_user) {
-  ChangePage();
+  location.href = '/HomePage';//ChangePage();
   clientSocket.emit('new google user', {
     id_token: google_user.profileObj.googleId,
     email: google_user.profileObj.email,
@@ -21,11 +21,12 @@ function get_info(google_user) {
   //ChangeVis();
   event.preventDefault();
 }
-
+/*
 function ChangePage() {
   location.href = '/HomePage';
   // <button  onclick="ChangePage()">index.html</button>
 }
+*/
 
 function ChangeVis() {
     const root = document.getElementById('visibility');
