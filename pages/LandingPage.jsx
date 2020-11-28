@@ -15,7 +15,7 @@ import { NavLink } from 'react-router-dom';
 
 export default function LandingPage() {
 
-  const [goals, setGoals] = useState([]);
+  //const [goals, setGoals] = useState([]);
   const [user, setUser] = useState({});
   
   const responseGoogle = (response) => {
@@ -31,8 +31,10 @@ export default function LandingPage() {
       image: google_user.profileObj.imageUrl,
     });
     //ChangeVis();
+  
     const root = document.getElementById('navi');
-    root.style.display = 'block'; 
+    root.style.display = 'block';
+    getGoogleUserInfo();
     event.preventDefault();
   }
   
@@ -43,7 +45,7 @@ export default function LandingPage() {
           setUser(data);
         });
       });
-    }
+  }
   
   /*
   function ChangePage() {
@@ -53,12 +55,12 @@ export default function LandingPage() {
   */
   
   //use changevis for when logged in to dispaly the navlink
-  
+  /*
   function ChangeVis() {
       const root = document.getElementById('navi');
       root.style.display = 'block'; 
   }
-
+  */
 
 
   return (
@@ -98,30 +100,6 @@ export default function LandingPage() {
       <br />
       
       <Avatar src={user.image} />
-      <div className="homepage_container">
-        <ScrollToBottom>
-        { goals.map((data, index) => (
-          <div>
-            <Avatar src={data.img_url} />
-
-            {data.name}
-            {' '}
-            {data.progress}
-            {' '}
-            a goal in
-            {' '}
-            <b>{data.category}</b>
-            :
-            {' '}
-            {data.description}
-            <br />
-            "
-            {data.post_text}
-            "
-          </div>
-        )) }
-        </ScrollToBottom>
-      </div>
     </div>
   );
 }
